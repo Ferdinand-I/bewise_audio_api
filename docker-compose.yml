@@ -1,0 +1,23 @@
+version: '2.7'
+
+services:
+  db:
+    image: postgres:14.0-alpine
+    volumes:
+      - bewisedata:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: Bewise
+    ports:
+      - "5432:5432"
+    hostname: db
+    container_name: BewiseAudioDB
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "Bewise", "-U", "postgres" ]
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+volumes:
+  bewisedata:
