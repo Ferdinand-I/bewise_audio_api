@@ -53,8 +53,7 @@ class AudioView(APIView):
         # конвертация
         converted = convert_wav_to_mp3_and_save(audio)
         # создание записи в БД
-        audio = AudioModel.objects.create(
-            user_id=serializer.validated_data.get('user_id'), audio=converted)
+        audio = AudioModel.objects.create(user_id=user, audio=converted)
         uri = request.build_absolute_uri(reverse('audio'))
         # с помощью кастомной утилиты билдим url
         url = make_url(uri, audio.uuid.hex, user.id)
