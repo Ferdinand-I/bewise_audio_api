@@ -1,6 +1,7 @@
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator, ValidationError
-from django.core.files.uploadedfile import InMemoryUploadedFile
+
 from .models import UserModel, AudioModel
 
 
@@ -21,18 +22,24 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AudioSerializer(serializers.ModelSerializer):
     """Сериализатор данных модели аудио."""
-    # user_id = serializers.IntegerField(write_only=True, required=True)
-    # user_uuid_token = serializers.UUIDField(
-    #     format='hex', write_only=True, required=True)
+    user_id = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=UserModel.objects.all()
+    )
+    user_uuid_token = serializers.UUIDField(write_only=True)
     audio = serializers.FileField(write_only=True)
 
     class Meta:
         model = AudioModel
-        fields = ['audio']
+        fields = ['user_id', 'user_uuid_token', 'audio']
 
     def validate_audio(self, value: InMemoryUploadedFile):
         """Валидация загружаемого файла."""
-        if value.content_type != 'audio/wave':
+        if value.content_type != ('audio/wave' or 'audio/wav'):
             raise ValidationError(
-                'Загружаемый файл должен быть в формате "audio/wave"')
+                'Загружаемый файл должен быть в формате "*.wav/*.wave"')
         return value
+
+
+class URLSerializer(serializers.Serializer):
+    """Сериализация URL."""
+    url = serializers.URLField()
