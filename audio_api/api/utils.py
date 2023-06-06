@@ -1,27 +1,28 @@
 """Модуль с утилитами."""
 import io
-from datetime import datetime
+import uuid
 from urllib.parse import urlencode
 
 import pydub
 from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from rest_framework.request import Request
+from django.shortcuts import reverse
 
 
-def convert_wav_to_mp3_and_save(file: InMemoryUploadedFile):
+def save_as_mp3(file: InMemoryUploadedFile):
     """Конвертация загруженного файла."""
+    uuid_salt = uuid.uuid4()  # uuid соль, чтобы избежать дубликаты имён
     _format = 'mp3'
-    name = (
-        f'{file.name.split(".")[0]}_'
-        f'{datetime.now().strftime("%y%m%d%H%M%S%f")}.{_format}'
-    )
+    name = f'{".".join(file.name.split(".")[:-1])}_{uuid_salt.hex}.{_format}'
     file = file.read()
     converted = pydub.AudioSegment.from_file(io.BytesIO(file)).export(
         settings.MEDIA_ROOT / f'{name}', format=_format)
     return converted.name
 
 
-def make_url(uri: str, audio_id: int, user_id: int):
+def make_url(request: Request, audio_id: int, user_id: int):
     """Билд url для скачивания аудио."""
+    uri = request.build_absolute_uri(reverse('audio'))
     params = {'id': audio_id, 'user': user_id}
     return uri + '?' + urlencode(params)

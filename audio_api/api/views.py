@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from .models import UserModel, AudioModel
 from .serializers import UserSerializer, AudioSerializer, URLSerializer
-from .utils import convert_wav_to_mp3_and_save, make_url
+from .utils import save_as_mp3, make_url
 
 
 class CreateUserView(APIView):
@@ -51,12 +51,11 @@ class AudioView(APIView):
 
         audio = serializer.validated_data.get('audio')
         # конвертация
-        converted = convert_wav_to_mp3_and_save(audio)
+        converted = save_as_mp3(audio)
         # создание записи в БД
         audio = AudioModel.objects.create(user_id=user, audio=converted)
-        uri = request.build_absolute_uri(reverse('audio'))
         # с помощью кастомной утилиты билдим url
-        url = make_url(uri, audio.uuid.hex, user.id)
+        url = make_url(request, audio.uuid.hex, user.id)
         serializer = URLSerializer(data={'url': url})
         if serializer.is_valid():
             return Response(serializer.validated_data, status=HTTP_201_CREATED)

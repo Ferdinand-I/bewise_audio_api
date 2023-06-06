@@ -30,7 +30,7 @@ docker compose up
 
 Эндпоинт для регистрации:
 
-http://localhost:8000/api/v1/createuser/
+http://localhost:8000/api/v1/user/
 
 Чтобы пройти регистрацию, на указанный выше эндпоинт надо отправить POST-запрос следующего вида:
 
@@ -44,9 +44,9 @@ http://localhost:8000/api/v1/createuser/
 
 ```JSON
 {
-  "user_id": "<id>",
-  "user_uuid_token": "<token>",
-  "audio": "<audio>"
+  "user_id": "<int>",
+  "user_uuid_token": "<int>",
+  "audio": "<*.wav>"
 }
 ```
 
