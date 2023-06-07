@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,7 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-j4mxw@@^ip%bm1#iq=ilm1(eguvw_0hcx%+iri_=1es*4w@3br'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+
+# Локально проект работает в режиме DEBUG,
+# в контейнерах проект будет работать в режиме продакшна
+DEBUG = os.environ.get('PROD', True)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
 
@@ -74,6 +78,8 @@ WSGI_APPLICATION = 'audio_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Для локальных тестов запускаем проект с БД SQLite,
+# в контейнерах будет работать PostgreSQL
 if DEBUG:
     DATABASES = {
         'default': {
@@ -134,6 +140,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# создание директории-тома, в которую будут загружаться аудио
 if not Path.exists(BASE_DIR / 'media/'):
     Path.mkdir(BASE_DIR / 'media/')
 

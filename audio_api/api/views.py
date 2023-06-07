@@ -3,7 +3,6 @@ import os
 from django.core.exceptions import ValidationError
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_400_BAD_REQUEST, HTTP_201_CREATED,
@@ -23,10 +22,11 @@ class CreateUserView(APIView):
         """Реализация POST-запроса."""
         data = request.data
         serializer = UserSerializer(data=data)
-        if serializer.is_valid():
-            user = UserModel.objects.create(**serializer.validated_data)
-            return Response(UserSerializer(user).data, status=HTTP_201_CREATED)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+        user = UserModel.objects.create(**serializer.validated_data)
+        return Response(UserSerializer(user).data, status=HTTP_201_CREATED)
 
 
 class AudioView(APIView):
@@ -43,11 +43,10 @@ class AudioView(APIView):
         user_uuid_token = serializer.validated_data.get('user_uuid_token')
         user = serializer.validated_data.get('user_id')
         # логика аутентификации пользователя
-        if not (user.uuid_token == user_uuid_token):
+        if user.uuid_token != user_uuid_token:
             return Response(
-                {'Ошибка': 'Неверный токен доступа.'},
-                status=HTTP_403_FORBIDDEN
-            )
+                {'Ошибка': 'Неверный user id или токен доступа.'},
+                status=HTTP_403_FORBIDDEN)
 
         audio = serializer.validated_data.get('audio')
         # конвертация
@@ -59,6 +58,7 @@ class AudioView(APIView):
         serializer = URLSerializer(data={'url': url})
         if serializer.is_valid():
             return Response(serializer.validated_data, status=HTTP_201_CREATED)
+
         return Response(serializer.errors, HTTP_400_BAD_REQUEST)
 
     def get(self, request: Request):
@@ -69,6 +69,7 @@ class AudioView(APIView):
         except ValidationError as e:
             data = {'Ошибка': e}
             return Response(data, status=HTTP_400_BAD_REQUEST)
+
         name = os.path.basename(audio.path)
         with open(audio.path, 'rb') as file:
             response = HttpResponse(

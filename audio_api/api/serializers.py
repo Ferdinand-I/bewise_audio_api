@@ -1,7 +1,7 @@
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator, ValidationError
-
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from .models import UserModel, AudioModel
 
 

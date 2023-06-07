@@ -23,9 +23,8 @@ class AudioModel(models.Model):
         UserModel, on_delete=models.CASCADE, verbose_name='Пользователь')
     audio = models.FileField(verbose_name='Аудиозапись')
     uuid = models.UUIDField(
-        primary_key=True, editable=False, unique=True,
-        default=uuid4, verbose_name='UUID-идентификатор аудио'
-    )
+        primary_key=True, editable=False, unique=True, default=uuid4,
+        verbose_name='UUID-идентификатор аудио')
 
     class Meta:
         ordering = ['audio']
