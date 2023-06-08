@@ -69,7 +69,7 @@ class AudioView(APIView):
             data = {'Ошибка': e}
             return Response(data, status=HTTP_400_BAD_REQUEST)
 
-        name = os.path.basename(audio.path).replace(',', '')
+        name = os.path.basename(audio.path)
         with open(audio.path, 'rb') as file:
             response = HttpResponse(
                 file,
