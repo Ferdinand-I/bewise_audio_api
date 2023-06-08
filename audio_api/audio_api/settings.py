@@ -144,6 +144,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if not Path.exists(BASE_DIR / 'media/'):
     Path.mkdir(BASE_DIR / 'media/')
 
+if not Path.exists(BASE_DIR / 'temp/'):
+    Path.mkdir(BASE_DIR / 'temp/')
+
 MEDIA_ROOT = BASE_DIR / 'media/'
 
 MEDIA_URL = '/media/'
+
+FILE_UPLOAD_TEMP_DIR = BASE_DIR / 'temp/'
+
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler"
+]

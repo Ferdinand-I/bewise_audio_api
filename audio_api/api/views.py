@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_400_BAD_REQUEST, HTTP_201_CREATED,
-                                   HTTP_403_FORBIDDEN)
+                                   HTTP_403_FORBIDDEN, HTTP_200_OK)
 from rest_framework.views import APIView
 
 from .models import UserModel, AudioModel
@@ -56,10 +56,9 @@ class AudioView(APIView):
         # с помощью кастомной утилиты билдим url
         url = make_url(request, audio.uuid.hex, user.id)
         serializer = URLSerializer(data={'url': url})
-        if serializer.is_valid():
-            return Response(serializer.validated_data, status=HTTP_201_CREATED)
-
-        return Response(serializer.errors, HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return Response(serializer.errors, HTTP_400_BAD_REQUEST)
+        return Response(serializer.validated_data, status=HTTP_201_CREATED)
 
     def get(self, request: Request):
         """Реализация GET-запроса. Скачивание аудио."""
@@ -70,13 +69,14 @@ class AudioView(APIView):
             data = {'Ошибка': e}
             return Response(data, status=HTTP_400_BAD_REQUEST)
 
-        name = os.path.basename(audio.path)
+        name = os.path.basename(audio.path).replace(',', '')
         with open(audio.path, 'rb') as file:
             response = HttpResponse(
                 file,
                 headers={
                     'Content-Type': 'audio/wave',
                     'Content-Disposition': f'attachment; filename={name}'
-                }
+                },
+                status=HTTP_200_OK
             )
         return response
