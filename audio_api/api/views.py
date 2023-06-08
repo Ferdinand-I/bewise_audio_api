@@ -45,7 +45,7 @@ class AudioView(APIView):
         # логика аутентификации пользователя
         if user.uuid_token != user_uuid_token:
             return Response(
-                {'Ошибка': 'Неверный user id или токен доступа.'},
+                {'Ошибка': 'Неверный токен доступа.'},
                 status=HTTP_403_FORBIDDEN)
 
         audio = serializer.validated_data.get('audio')
