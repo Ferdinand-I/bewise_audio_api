@@ -144,6 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if not Path.exists(BASE_DIR / 'media/'):
     Path.mkdir(BASE_DIR / 'media/')
 
+# создание директории для временного хранилища файлов
 if not Path.exists(BASE_DIR / 'temp/'):
     Path.mkdir(BASE_DIR / 'temp/')
 
