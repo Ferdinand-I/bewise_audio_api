@@ -25,7 +25,7 @@ services:
     volumes:
       - media:/app/audio_api/media/
     environment:
-      PROD: '${False}'
+      DEBUG: False
     restart: on-failure
     ports:
       - "8000:8000"

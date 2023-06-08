@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from distutils.util import strtobool
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +28,7 @@ SECRET_KEY = 'django-insecure-j4mxw@@^ip%bm1#iq=ilm1(eguvw_0hcx%+iri_=1es*4w@3br
 
 # Локально проект работает в режиме DEBUG,
 # в контейнерах проект будет работать в режиме продакшна
-DEBUG = os.environ.get('PROD', True)
+DEBUG = strtobool(os.environ.get('DEBUG', 'True'))
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
 
