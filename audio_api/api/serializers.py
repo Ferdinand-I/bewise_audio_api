@@ -12,7 +12,12 @@ class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         write_only=True,
         required=True,
-        validators=[UniqueValidator(queryset=UserModel.objects.all())]
+        validators=[
+            UniqueValidator(
+                queryset=UserModel.objects.all(),
+                message='Пользователь с таким именем уже существует.'
+            )
+        ]
     )
     uuid_token = serializers.UUIDField(format='hex', read_only=True)
 

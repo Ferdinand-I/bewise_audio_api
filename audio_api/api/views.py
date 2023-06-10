@@ -19,7 +19,7 @@ class CreateUserView(APIView):
     http_method_names = ['post']
 
     def post(self, request: Request):
-        """Реализация POST-запроса."""
+        """Реализация POST-запроса. Создание пользователя."""
         data = request.data
         serializer = UserSerializer(data=data)
         if not serializer.is_valid():
@@ -34,7 +34,7 @@ class AudioView(APIView):
     http_method_names = ['get', 'post']
 
     def post(self, request: Request):
-        """Реализация POST-запроса."""
+        """Реализация POST-запроса. Загрузка и конвертация аудио."""
         data = request.data
         serializer = AudioSerializer(data=data)
         if not serializer.is_valid():
@@ -56,9 +56,11 @@ class AudioView(APIView):
     def get(self, request: Request):
         """Реализация GET-запроса. Скачивание аудио."""
         audio_uuid = request.query_params.get('id')
+        user_id = request.query_params.get('user')
 
         try:
-            audio = get_object_or_404(AudioModel, uuid=audio_uuid).audio
+            audio = get_object_or_404(
+                AudioModel, uuid=audio_uuid, user_id_id=user_id).audio
         except ValidationError as e:
             data = {'Ошибка': e}
             return Response(data, status=HTTP_400_BAD_REQUEST)
