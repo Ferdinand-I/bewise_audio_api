@@ -156,5 +156,5 @@ MEDIA_URL = '/media/'
 FILE_UPLOAD_TEMP_DIR = BASE_DIR / 'temp/'
 
 FILE_UPLOAD_HANDLERS = [
-    "django.core.files.uploadhandler.TemporaryFileUploadHandler"
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler'
 ]

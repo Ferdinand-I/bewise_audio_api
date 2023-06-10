@@ -1,5 +1,6 @@
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.validators import UniqueValidator, ValidationError
 
 from .models import UserModel, AudioModel
@@ -31,6 +32,14 @@ class AudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = AudioModel
         fields = ['user_id', 'user_uuid_token', 'audio']
+
+    def validate(self, attrs):
+        """Аутентификация на уровне сериализатора."""
+        if attrs.get('user_id').uuid_token != attrs.get('user_uuid_token'):
+            raise AuthenticationFailed(
+                'Неверный токен доступа.'
+            )
+        return attrs
 
     def validate_audio(self, value: InMemoryUploadedFile):
         """Валидация загружаемого файла."""
